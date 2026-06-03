@@ -1,0 +1,89 @@
+{% extends 'base.html' %}
+{% block title %}Pengaturan{% endblock %}
+{% block page_title %}Pengaturan{% endblock %}
+{% block page_desc %}Kelola akun, user, dan konfigurasi sistem{% endblock %}
+
+{% block content %}
+<div class="row g-3">
+
+    <!-- Profil -->
+    <div class="col-md-6">
+        <a href="{% url 'pengaturan:profil' %}" style="text-decoration:none;">
+            <div class="kpi-card">
+                <div class="kpi-content">
+                    <p class="kpi-label">Profil Saya</p>
+                    <p style="font-size:14px; color:var(--gray-600); margin:0;">
+                        Edit nama, email, dan ganti password
+                    </p>
+                </div>
+                <div class="kpi-icon primary"><i class="bi bi-person"></i></div>
+            </div>
+        </a>
+    </div>
+
+    <!-- Ganti Password -->
+    <div class="col-md-6">
+        <a href="{% url 'pengaturan:ganti_password' %}" style="text-decoration:none;">
+            <div class="kpi-card">
+                <div class="kpi-content">
+                    <p class="kpi-label">Ganti Password</p>
+                    <p style="font-size:14px; color:var(--gray-600); margin:0;">
+                        Perbarui password akun kamu
+                    </p>
+                </div>
+                <div class="kpi-icon danger"><i class="bi bi-key"></i></div>
+            </div>
+        </a>
+    </div>
+
+    {% if request.user.role == 'admin' %}
+
+    <!-- Manajemen User -->
+    <div class="col-md-6">
+        <a href="{% url 'pengaturan:user_list' %}" style="text-decoration:none;">
+            <div class="kpi-card">
+                <div class="kpi-content">
+                    <p class="kpi-label">Manajemen User</p>
+                    <p style="font-size:14px; color:var(--gray-600); margin:0;">
+                        Tambah, edit, dan kelola akses user
+                    </p>
+                </div>
+                <div class="kpi-icon success"><i class="bi bi-people"></i></div>
+            </div>
+        </a>
+    </div>
+
+    <!-- Info Toko -->
+    <div class="col-md-6">
+        <a href="{% url 'pengaturan:info_toko' %}" style="text-decoration:none;">
+            <div class="kpi-card">
+                <div class="kpi-content">
+                    <p class="kpi-label">Info Toko</p>
+                    <p style="font-size:14px; color:var(--gray-600); margin:0;">
+                        Nama toko, alamat, dan konfigurasi default
+                    </p>
+                </div>
+                <div class="kpi-icon orange"><i class="bi bi-shop"></i></div>
+            </div>
+        </a>
+    </div>
+
+    <!-- Log Aktivitas -->
+    <div class="col-md-6">
+        <a href="{% url 'pengaturan:log' %}" style="text-decoration:none;">
+            <div class="kpi-card">
+                <div class="kpi-content">
+                    <p class="kpi-label">Log Aktivitas</p>
+                    <p style="font-size:14px; color:var(--gray-600); margin:0;">
+                        Riwayat aktivitas seluruh user
+                    </p>
+                </div>
+                <div class="kpi-icon purple"><i class="bi bi-clock-history"></i></div>
+            </div>
+        </a>
+    </div>
+
+    {% endif %}
+
+</div>
+{% endblock %}

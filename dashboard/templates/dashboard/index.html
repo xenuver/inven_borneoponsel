@@ -1,0 +1,238 @@
+{% extends 'base.html' %}
+{% load humanize %}
+{% block title %}Dashboard{% endblock %}
+{% block page_title %}Dashboard{% endblock %}
+{% block page_desc %}Ringkasan kinerja dan monitoring inventory{% endblock %}
+
+{% block content %}
+
+<!-- FILTER BAR -->
+<div class="dashboard-toolbar">
+    <form method="get" class="d-flex gap-2">
+        <button type="submit" name="filter" value="hari"
+                class="btn-soft {% if filter == 'hari' %}active{% endif %}">
+            Hari Ini
+        </button>
+        <button type="submit" name="filter" value="bulan"
+                class="btn-soft {% if filter == 'bulan' %}active{% endif %}">
+            Bulan Ini
+        </button>
+        <button type="submit" name="filter" value="tahun"
+                class="btn-soft {% if filter == 'tahun' %}active{% endif %}">
+            Tahun Ini
+        </button>
+    </form>
+</div>
+
+<!-- KPI ROW 1 -->
+<div class="row g-3 mb-4">
+
+    <div class="col-xl-3 col-md-6">
+        <div class="kpi-card">
+            <div class="kpi-content">
+                <p class="kpi-label">Total Produk</p>
+                <h3 class="kpi-value">{{ total_produk }}</h3>
+            </div>
+            <div class="kpi-icon primary">
+                <i class="bi bi-box"></i>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-xl-3 col-md-6">
+        <div class="kpi-card">
+            <div class="kpi-content">
+                <p class="kpi-label">Total Item</p>
+                <h3 class="kpi-value">{{ total_item }}</h3>
+            </div>
+            <div class="kpi-icon success">
+                <i class="bi bi-archive"></i>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-xl-3 col-md-6">
+        <div class="kpi-card">
+            <div class="kpi-content">
+                <p class="kpi-label">Nilai Total</p>
+                <h3 class="kpi-value">Rp {{ nilai_total|intcomma }}</h3>
+            </div>
+            <div class="kpi-icon purple">
+                <i class="bi bi-cash-stack"></i>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-xl-3 col-md-6">
+        <div class="kpi-card danger">
+            <div class="kpi-content">
+                <p class="kpi-label">Stok Rendah</p>
+                <h3 class="kpi-value text-danger">{{ stok_rendah }}</h3>
+            </div>
+            <div class="kpi-icon danger">
+                <i class="bi bi-exclamation-triangle"></i>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<!-- KPI ROW 2 (Activity) -->
+<div class="row g-3 mb-4">
+
+    <div class="col-xl-4 col-md-6">
+        <div class="kpi-card">
+            <div class="kpi-content">
+                <p class="kpi-label">Barang Masuk</p>
+                <h3 class="kpi-value text-success">{{ barang_masuk }} Unit</h3>
+            </div>
+            <div class="kpi-icon success">
+                <i class="bi bi-arrow-down-circle"></i>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-xl-4 col-md-6">
+        <div class="kpi-card">
+            <div class="kpi-content">
+                <p class="kpi-label">Barang Keluar</p>
+                <h3 class="kpi-value text-danger">{{ barang_keluar }} Unit</h3>
+            </div>
+            <div class="kpi-icon danger">
+                <i class="bi bi-arrow-up-circle"></i>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-xl-4 col-md-12">
+        <div class="kpi-card">
+            <div class="kpi-content">
+                <p class="kpi-label">Transaksi Hari Ini</p>
+                <h3 class="kpi-value">{{ transaksi_hari_ini }}</h3>
+            </div>
+            <div class="kpi-icon primary">
+                <i class="bi bi-receipt"></i>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<!-- MAIN GRID -->
+<div class="row g-4">
+
+    <!-- TRANSACTIONS TABLE -->
+    <div class="col-xl-7">
+        <div class="enterprise-card h-100">
+            <div class="card-header">
+                <span>Transaksi Terbaru</span>
+                <a href="/transaksi/" class="btn-soft" style="font-size: 12px; padding: 4px 12px;">
+                    Lihat Semua
+                </a>
+            </div>
+            <div class="table-responsive">
+                <table class="enterprise-table mb-0">
+                    <thead>
+                        <tr>
+                            <th>Tanggal</th>
+                            <th>Produk</th>
+                            <th>Tipe</th>
+                            <th class="text-end">Qty</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    {% for item in transaksi_terbaru %}
+                    <tr>
+                        <td style="font-size: 13px; color: var(--text-muted);">
+                            {{ item.transaksi.tanggal|date:"d M Y, H.i" }}
+                        </td>
+                        <td class="fw-semibold">{{ item.produk.nama_produk }}</td>
+                        <td>
+                            <span class="badge-soft {% if item.transaksi.jenis_transaksi == 'MASUK' %}success{% else %}danger{% endif %}">
+                                {{ item.transaksi.jenis_transaksi }}
+                            </span>
+                        </td>
+                        <td class="text-end fw-semibold">
+                            {% if item.transaksi.jenis_transaksi == 'MASUK' %}
+                                <span class="text-success">+{{ item.jumlah }}</span>
+                            {% else %}
+                                <span class="text-danger">-{{ item.jumlah }}</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="4" class="text-center py-4 text-muted">
+                            Tidak ada transaksi terbaru
+                        </td>
+                    </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- LOW STOCK -->
+    <div class="col-xl-5">
+        <div class="enterprise-card h-100">
+            <div class="card-header">
+                <span>Peringatan Stok Rendah</span>
+                <span class="badge-soft danger">{{ stok_rendah }} item</span>
+            </div>
+            <div class="p-3">
+                {% for produk in peringatan_stok %}
+                <div class="stock-item">
+                    <div>
+                        <p class="mb-0 fw-semibold" style="font-size: 14px;">
+                            {{ produk.nama_produk }}
+                        </p>
+                        <small class="text-muted">{{ produk.kategori.nama_kategori }}</small>
+                    </div>
+                    <span class="stock-badge">{{ produk.stok }}</span>
+                </div>
+                {% empty %}
+                <div class="text-center py-4">
+                    <i class="bi bi-check-circle text-success" style="font-size: 24px;"></i>
+                    <p class="text-muted mt-2 mb-0" style="font-size: 13px;">Semua stok dalam kondisi baik</p>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+    <!-- CATEGORY DISTRIBUTION -->
+    <div class="col-12">
+        <div class="enterprise-card">
+            <div class="card-header">
+                Distribusi Per Kategori
+            </div>
+            <div class="p-3">
+                <div class="row g-3">
+                    {% for item in distribusi_kategori %}
+                    <div class="col-lg-4 col-md-6">
+                        <div style="background:var(--bg-card); border:1px solid var(--border-color); border-radius:var(--radius-md); padding:16px 20px;">
+                            <p style="font-size:14px; font-weight:500; color:var(--gray-700); margin-bottom:8px;">
+                                {{ item.kategori__nama_kategori }}
+                            </p>
+                            <p style="font-size:13px; color:var(--text-muted); margin-bottom:4px;">
+                                {{ item.total_unit }} unit
+                            </p>
+                            <p style="font-size:16px; font-weight:600; color:var(--primary); margin:0;">
+                                Rp {{ item.total_nilai|floatformat:0 }}
+                            </p>
+                        </div>
+                    </div>
+                    {% empty %}
+                    <div class="col-12">
+                        <p class="text-center text-muted py-3">Belum ada data kategori</p>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+{% endblock %}

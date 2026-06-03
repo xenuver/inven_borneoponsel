@@ -1,0 +1,78 @@
+{% extends "base.html" %}
+{% block title %}Barang Masuk{% endblock %}
+{% block page_title %}Barang Masuk{% endblock %}
+{% block page_desc %}Tambah stok barang ke sistem{% endblock %}
+
+{% block content %}
+
+<div class="row justify-content-center">
+    <div class="col-lg-6">
+
+        <div class="card shadow-sm border-0">
+            <div class="card-body p-4">
+
+                <h5 class="mb-4">Form Barang Masuk</h5>
+
+                <form method="post">
+                    {% csrf_token %}
+
+                    <!-- PRODUK -->
+                    <div class="mb-3">
+                        <label class="form-label">Produk</label>
+                        {{ form.produk }}
+                        {% if form.produk.errors %}
+                            <div class="text-danger small">
+                                {{ form.produk.errors }}
+                            </div>
+                        {% endif %}
+                    </div>
+
+                    <!-- JUMLAH -->
+                    <div class="mb-3">
+                        <label class="form-label">Jumlah</label>
+                        {{ form.jumlah }}
+                        {% if form.jumlah.errors %}
+                            <div class="text-danger small">
+                                {{ form.jumlah.errors }}
+                            </div>
+                        {% endif %}
+                    </div>
+
+                    <!-- KETERANGAN -->
+                    <div class="mb-3">
+                        <label class="form-label">Keterangan</label>
+                        {{ form.keterangan }}
+                        {% if form.keterangan.errors %}
+                            <div class="text-danger small">
+                                {{ form.keterangan.errors }}
+                            </div>
+                        {% endif %}
+                    </div>
+
+                    <div class="d-flex justify-content-end gap-2">
+                        <a href="{% url 'transaksi_list' %}" class="btn btn-outline-secondary">
+                            Batal
+                        </a>
+                        <button type="submit" class="btn btn-success">
+                            Simpan
+                        </button>
+                    </div>
+
+                </form>
+
+            </div>
+        </div>
+
+        <!-- MESSAGES -->
+        {% if messages %}
+            {% for message in messages %}
+                <div class="alert alert-success mt-3">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        {% endif %}
+
+    </div>
+</div>
+
+{% endblock %}

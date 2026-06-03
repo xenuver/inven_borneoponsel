@@ -1,0 +1,75 @@
+.layout {
+    display: flex;
+}
+
+.main {
+    flex: 1;
+}
+
+.content {
+    padding: 20px;
+}
+
+.topbar {
+    padding: 15px 20px;
+    border-bottom: 1px solid var(--gray-200);
+}
+
+.dashboard-toolbar {
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: 24px;
+}
+
+/* ========================
+   SIDEBAR
+======================== */
+
+.sidebar-menu .nav-link {
+    border-radius: var(--radius-md);
+    padding: 12px 14px;
+    font-weight: 500;
+    color: var(--gray-700);
+    transition: all 0.2s ease;
+}
+
+.sidebar-menu .nav-link:hover {
+    background-color: var(--gray-200);
+}
+
+.sidebar-menu .nav-link.active {
+    background-color: var(--primary) !important;
+    color: white !important;
+    box-shadow: 0 4px 8px rgba(59, 130, 246, 0.25);
+}
+
+.sidebar i {
+    font-size: 18px;
+}
+
+.logo-icon {
+    background: var(--primary);
+    color: white;
+    padding: 10px;
+    border-radius: var(--radius-sm);
+    font-size: 18px;
+}
+
+/* ========================
+   RESPONSIVE
+======================== */
+
+@media (max-width: 768px) {
+    .sidebar {
+        display: none;
+    }
+
+    .sidebar.show {
+        display: block;
+        position: fixed;
+        top: 0;
+        left: 0;
+        z-index: 1000;
+        height: 100vh;
+    }
+}

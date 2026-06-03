@@ -1,0 +1,90 @@
+{% extends 'base.html' %}
+{% block title %}Manajemen User{% endblock %}
+{% block page_title %}Manajemen User{% endblock %}
+{% block page_desc %}Kelola akses dan role seluruh user{% endblock %}
+
+{% block content %}
+
+{% if messages %}
+{% for message in messages %}
+<div class="alert alert-{% if message.tags == 'error' %}danger{% else %}success{% endif %} mb-3">
+    {{ message }}
+</div>
+{% endfor %}
+{% endif %}
+
+<div class="enterprise-card">
+    <div class="card-header">
+        <span>Daftar User</span>
+        <a href="{% url 'pengaturan:user_tambah' %}" class="btn-primary-custom">
+            <i class="bi bi-plus-lg"></i> Tambah User
+        </a>
+    </div>
+    <div class="table-responsive">
+        <table class="enterprise-table">
+            <thead>
+                <tr>
+                    <th>Username</th>
+                    <th>Nama Lengkap</th>
+                    <th>Email</th>
+                    <th>Role</th>
+                    <th>Status</th>
+                    <th class="text-center">Aksi</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for u in users %}
+                <tr>
+                    <td class="fw-semibold">
+                        {{ u.username }}
+                        {% if u == request.user %}
+                            <span class="badge-soft primary ms-1">Saya</span>
+                        {% endif %}
+                    </td>
+                    <td>{{ u.get_full_name|default:"-" }}</td>
+                    <td style="font-size:13px; color:var(--text-muted);">{{ u.email|default:"-" }}</td>
+                    <td>
+                        {% if u.role == 'admin' %}
+                            <span class="badge-soft danger">Admin</span>
+                        {% else %}
+                            <span class="badge-soft primary">Petugas Gudang</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if u.is_active %}
+                            <span class="badge-soft success">Aktif</span>
+                        {% else %}
+                            <span class="badge-soft danger">Nonaktif</span>
+                        {% endif %}
+                    </td>
+                    <td class="text-center">
+                        <div class="d-flex justify-content-center gap-3">
+                            <a href="{% url 'pengaturan:user_edit' u.id %}"
+                               style="color:var(--primary); text-decoration:none; font-size:13px;">
+                                <i class="bi bi-pencil"></i> Edit
+                            </a>
+                            {% if u != request.user %}
+                            <a href="{% url 'pengaturan:user_toggle' u.id %}"
+                               onclick="return confirm('{% if u.is_active %}Nonaktifkan{% else %}Aktifkan{% endif %} user {{ u.username }}?')"
+                               style="color:{% if u.is_active %}var(--danger){% else %}var(--success){% endif %}; text-decoration:none; font-size:13px;">
+                                {% if u.is_active %}
+                                    <i class="bi bi-slash-circle"></i> Nonaktifkan
+                                {% else %}
+                                    <i class="bi bi-check-circle"></i> Aktifkan
+                                {% endif %}
+                            </a>
+                            {% endif %}
+                        </div>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="6" class="text-center py-4 text-muted">Belum ada user</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+{% endblock %}

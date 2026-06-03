@@ -1,0 +1,207 @@
+{% extends "base.html" %}
+{% block title %}Transaksi{% endblock %}
+{% block page_title %}Transaksi{% endblock %}
+{% block page_desc %}Kelola barang masuk dan keluar{% endblock %}
+
+{% block content %}
+
+<!-- TOOLBAR -->
+<div class="dashboard-toolbar">
+    <button class="btn-primary-custom" id="openChoice">
+        <i class="bi bi-plus-lg"></i> Tambah Transaksi
+    </button>
+</div>
+
+<!-- KPI CARDS -->
+<div class="grid-3 mb-4">
+
+    <div class="kpi-card">
+        <div class="kpi-content">
+            <span class="kpi-label">Total Barang Masuk</span>
+            <h3 class="kpi-value text-success">{{ total_masuk }} unit</h3>
+        </div>
+        <div class="kpi-icon success">
+            <i class="bi bi-arrow-down-circle"></i>
+        </div>
+    </div>
+
+    <div class="kpi-card">
+        <div class="kpi-content">
+            <span class="kpi-label">Total Barang Keluar</span>
+            <h3 class="kpi-value text-danger">{{ total_keluar }} unit</h3>
+        </div>
+        <div class="kpi-icon danger">
+            <i class="bi bi-arrow-up-circle"></i>
+        </div>
+    </div>
+
+    <div class="kpi-card">
+        <div class="kpi-content">
+            <span class="kpi-label">Total Transaksi</span>
+            <h3 class="kpi-value">{{ total_transaksi }}</h3>
+        </div>
+        <div class="kpi-icon primary">
+            <i class="bi bi-receipt"></i>
+        </div>
+    </div>
+
+</div>
+
+<!-- FILTER PILLS -->
+<div class="d-flex gap-2 mb-3">
+    <a href="?filter=semua"  class="filter-pill {% if filter_tab == 'semua' %}active{% endif %}">Semua</a>
+    <a href="?filter=masuk"  class="filter-pill {% if filter_tab == 'masuk' %}active{% endif %}">Barang Masuk</a>
+    <a href="?filter=keluar" class="filter-pill {% if filter_tab == 'keluar' %}active{% endif %}">Barang Keluar</a>
+</div>
+
+<!-- TABLE -->
+<div class="enterprise-card">
+    <div class="table-responsive">
+        <table class="enterprise-table">
+            <thead>
+                <tr>
+                    <th>Tanggal</th>
+                    <th>Nama Barang</th>
+                    <th>Jenis</th>
+                    <th>Jumlah</th>
+                    <th>Keterangan</th>
+                    <th>User</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in transaksi_list %}
+                <tr>
+                    <td style="font-size:13px; color:var(--text-muted); white-space:nowrap;">
+                        {{ item.transaksi.tanggal|date:"d M Y, H:i" }}
+                    </td>
+                    <td class="fw-semibold">{{ item.produk.nama_produk }}</td>
+                    <td>
+                        {% if item.transaksi.jenis_transaksi == "MASUK" %}
+                            <span class="badge-soft success">Masuk</span>
+                        {% else %}
+                            <span class="badge-soft danger">Keluar</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if item.transaksi.jenis_transaksi == "MASUK" %}
+                            <span class="text-success fw-semibold">+{{ item.jumlah }}</span>
+                        {% else %}
+                            <span class="text-danger fw-semibold">-{{ item.jumlah }}</span>
+                        {% endif %}
+                    </td>
+                    <td style="font-size:13px; color:var(--text-muted);">
+                        {{ item.transaksi.keterangan|default:"-" }}
+                    </td>
+                    <td style="font-size:13px;">{{ item.transaksi.user }}</td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="6" class="text-center py-4 text-muted">
+                        Tidak ada data transaksi
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <!-- PAGINATION -->
+    <div style="padding:14px 20px; border-top:1px solid var(--border-color); display:flex; justify-content:space-between; align-items:center;">
+        <small class="text-muted">
+            Halaman {{ transaksi_list.number }} dari {{ transaksi_list.paginator.num_pages }}
+        </small>
+        <div class="d-flex gap-2">
+            {% if transaksi_list.has_previous %}
+            <a class="pagination-btn" href="?page={{ transaksi_list.previous_page_number }}&filter={{ filter_tab }}">
+                <i class="bi bi-chevron-left"></i> Sebelumnya
+            </a>
+            {% endif %}
+            {% if transaksi_list.has_next %}
+            <a class="pagination-btn" href="?page={{ transaksi_list.next_page_number }}&filter={{ filter_tab }}">
+                Berikutnya <i class="bi bi-chevron-right"></i>
+            </a>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<!-- MODAL: PILIH JENIS -->
+<div id="choiceModal" class="modal-overlay">
+    <div class="modal-box text-center">
+        <h3 style="margin-bottom:8px;">Tambah Transaksi</h3>
+        <p style="font-size:14px; color:var(--text-muted); margin-bottom:24px;">
+            Pilih jenis transaksi yang ingin dicatat
+        </p>
+        <div class="d-flex flex-column gap-2">
+            <button class="btn btn-success w-100 open-masuk" style="padding:12px;">
+                <i class="bi bi-arrow-down-circle me-2"></i> Barang Masuk
+            </button>
+            <button class="btn btn-danger w-100 open-keluar" style="padding:12px;">
+                <i class="bi bi-arrow-up-circle me-2"></i> Barang Keluar
+            </button>
+            <button class="btn btn-outline-secondary w-100 close-modal" style="padding:12px;">
+                Batal
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- MODAL: BARANG MASUK -->
+<div id="masukModal" class="modal-overlay">
+    <div class="modal-box">
+        <h3><i class="bi bi-arrow-down-circle text-success me-2"></i>Barang Masuk</h3>
+        <form method="POST" action="{% url 'barang_masuk' %}">
+            {% csrf_token %}
+            {{ form_masuk.as_p }}
+            <div class="modal-actions">
+                <button type="button" class="btn btn-outline-secondary close-modal">Batal</button>
+                <button type="submit" class="btn btn-success">Simpan</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- MODAL: BARANG KELUAR -->
+<div id="keluarModal" class="modal-overlay">
+    <div class="modal-box">
+        <h3><i class="bi bi-arrow-up-circle text-danger me-2"></i>Barang Keluar</h3>
+        <form method="POST" action="{% url 'barang_keluar' %}">
+            {% csrf_token %}
+            {{ form_keluar.as_p }}
+            <div class="modal-actions">
+                <button type="button" class="btn btn-outline-secondary close-modal">Batal</button>
+                <button type="submit" class="btn btn-danger">Simpan</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+const $ = id => document.getElementById(id);
+
+$('openChoice').onclick = () => $('choiceModal').classList.add('active');
+
+document.querySelector('.open-masuk').onclick = () => {
+    $('choiceModal').classList.remove('active');
+    $('masukModal').classList.add('active');
+};
+
+document.querySelector('.open-keluar').onclick = () => {
+    $('choiceModal').classList.remove('active');
+    $('keluarModal').classList.add('active');
+};
+
+document.querySelectorAll('.close-modal').forEach(btn => {
+    btn.onclick = () => {
+        document.querySelectorAll('.modal-overlay').forEach(m => m.classList.remove('active'));
+    };
+});
+
+document.querySelectorAll('.modal-overlay').forEach(overlay => {
+    overlay.onclick = e => {
+        if (e.target === overlay) overlay.classList.remove('active');
+    };
+});
+</script>
+
+{% endblock %}

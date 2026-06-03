@@ -1,0 +1,49 @@
+{% extends 'base.html' %}
+{% block title %}{% if kategori %}Edit{% else %}Tambah{% endif %} Kategori{% endblock %}
+{% block page_title %}{% if kategori %}Edit{% else %}Tambah{% endif %} Kategori{% endblock %}
+{% block page_desc %}{% if kategori %}Perbarui data kategori{% else %}Tambah kategori baru{% endif %}{% endblock %}
+
+{% block content %}
+
+<div class="row justify-content-center">
+    <div class="col-lg-6 col-md-8">
+
+        <div class="form-card">
+
+            <form method="post">
+                {% csrf_token %}
+
+                <div class="mb-3">
+                    <label class="form-label">Nama Kategori</label>
+                    <input type="text"
+                           name="nama_kategori"
+                           class="form-control"
+                           placeholder="Contoh: Elektronik"
+                           value="{{ kategori.nama_kategori|default:'' }}"
+                           required>
+                </div>
+
+                <div class="mb-4">
+                    <label class="form-label">Deskripsi <span style="color: var(--text-muted); font-weight: 400;">(opsional)</span></label>
+                    <textarea name="deskripsi"
+                              class="form-control"
+                              rows="3"
+                              placeholder="Deskripsi singkat kategori ini">{{ kategori.deskripsi|default:'' }}</textarea>
+                </div>
+
+                <div class="d-flex justify-content-end gap-2">
+                    <a href="{% url 'kategori:list' %}" class="btn btn-outline-secondary">
+                        Batal
+                    </a>
+                    <button type="submit" class="btn-primary-custom">
+                        <i class="bi bi-check-lg"></i> Simpan
+                    </button>
+                </div>
+
+            </form>
+        </div>
+
+    </div>
+</div>
+
+{% endblock %}

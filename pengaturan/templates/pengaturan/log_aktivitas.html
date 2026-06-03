@@ -1,0 +1,61 @@
+{% extends 'base.html' %}
+{% block title %}Log Aktivitas{% endblock %}
+{% block page_title %}Log Aktivitas{% endblock %}
+{% block page_desc %}Riwayat aktivitas seluruh user (200 terbaru){% endblock %}
+
+{% block content %}
+
+<div class="enterprise-card">
+    <div class="card-header">
+        <span>Riwayat Aktivitas</span>
+        <span class="badge-soft primary">{{ logs|length }} entri</span>
+    </div>
+    <div class="table-responsive">
+        <table class="enterprise-table">
+            <thead>
+                <tr>
+                    <th>Waktu</th>
+                    <th>User</th>
+                    <th>Aksi</th>
+                    <th>Keterangan</th>
+                    <th>IP</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for log in logs %}
+                <tr>
+                    <td style="font-size:13px; color:var(--text-muted); white-space:nowrap;">
+                        {{ log.waktu|date:"d M Y, H:i" }}
+                    </td>
+                    <td class="fw-semibold">{{ log.user|default:"-" }}</td>
+                    <td>
+                        {% if log.aksi == 'login' %}
+                            <span class="badge-soft success">Login</span>
+                        {% elif log.aksi == 'logout' %}
+                            <span class="badge-soft primary">Logout</span>
+                        {% elif log.aksi == 'tambah' %}
+                            <span class="badge-soft success">Tambah</span>
+                        {% elif log.aksi == 'ubah' %}
+                            <span class="badge-soft primary">Ubah</span>
+                        {% else %}
+                            <span class="badge-soft danger">Hapus</span>
+                        {% endif %}
+                    </td>
+                    <td style="font-size:13px;">{{ log.keterangan }}</td>
+                    <td style="font-size:13px; color:var(--text-muted);">
+                        {{ log.ip_address|default:"-" }}
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="5" class="text-center py-4 text-muted">
+                        Belum ada log aktivitas
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+{% endblock %}

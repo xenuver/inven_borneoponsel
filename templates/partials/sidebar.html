@@ -1,0 +1,113 @@
+<div class="sidebar bg-white border-end vh-100 p-3 d-flex flex-column" style="width:250px; flex-shrink:0;">
+
+    <!-- Logo + Dark Mode Toggle -->
+    <div class="d-flex align-items-center justify-content-between mb-4">
+        <div class="d-flex align-items-center gap-2">
+            <div class="logo-icon"><i class="bi bi-box"></i></div>
+            <h5 class="fw-bold m-0" style="font-size:16px;">Inventory</h5>
+        </div>
+
+        <button id="themeToggle" onclick="toggleTheme()"
+                style="width:34px; height:34px; border-radius:var(--radius-sm); border:1px solid var(--gray-200); background:var(--gray-100); color:var(--gray-600); display:flex; align-items:center; justify-content:center; cursor:pointer; transition:all 0.2s; font-size:15px;"
+                title="Ganti tema">
+            <i class="bi bi-moon" id="themeIcon"></i>
+        </button>
+    </div>
+
+    <!-- Menu -->
+    <ul class="nav nav-pills flex-column gap-1 sidebar-menu flex-grow-1">
+
+        <li class="nav-item">
+            <a href="/dashboard/"
+               class="nav-link d-flex align-items-center gap-2 {% if '/dashboard/' in request.path %}active{% endif %}">
+                <i class="bi bi-grid"></i> Dashboard
+            </a>
+        </li>
+
+        <li class="nav-item">
+            <a href="/produk/"
+               class="nav-link d-flex align-items-center gap-2 {% if '/produk/' in request.path %}active{% endif %}">
+                <i class="bi bi-box-seam"></i> Inventory
+            </a>
+        </li>
+
+        <li class="nav-item">
+            <a href="/transaksi/"
+               class="nav-link d-flex align-items-center gap-2 {% if '/transaksi/' in request.path %}active{% endif %}">
+                <i class="bi bi-arrow-left-right"></i> Transaksi
+            </a>
+        </li>
+
+        <li class="nav-item">
+            <a href="/kategori/"
+               class="nav-link d-flex align-items-center gap-2 {% if '/kategori/' in request.path %}active{% endif %}">
+                <i class="bi bi-folder"></i> Kategori
+            </a>
+        </li>
+
+        <li class="nav-item">
+            <a href="/laporan/"
+               class="nav-link d-flex align-items-center gap-2 {% if '/laporan/' in request.path %}active{% endif %}">
+                <i class="bi bi-file-earmark-text"></i> Laporan
+            </a>
+        </li>
+
+        <li class="nav-item">
+            <a href="/pengaturan/"
+               class="nav-link d-flex align-items-center gap-2 {% if '/pengaturan/' in request.path %}active{% endif %}">
+                <i class="bi bi-gear"></i> Pengaturan
+            </a>
+        </li>
+
+    </ul>
+
+    <!-- User info + logout -->
+    <div class="mt-auto pt-3 border-top">
+        <div class="d-flex align-items-center justify-content-between">
+            <div class="d-flex align-items-center gap-2">
+                <div style="width:34px; height:34px; border-radius:50%; background:var(--primary); display:flex; align-items:center; justify-content:center; color:white; font-size:14px; font-weight:600; flex-shrink:0;">
+                    {{ request.user.username|first|upper }}
+                </div>
+                <div>
+                    <div style="font-size:13px; font-weight:500; color:var(--gray-700); line-height:1.2;">
+                        {{ request.user.get_full_name|default:request.user.username }}
+                    </div>
+                    <div style="font-size:11px; color:var(--text-muted);">
+                        {{ request.user.get_role_display }}
+                    </div>
+                </div>
+            </div>
+
+            <a href="/accounts/logout/"
+               title="Keluar"
+               style="color:var(--text-muted); text-decoration:none; font-size:18px; padding:4px;"
+               onclick="return confirm('Yakin ingin keluar?')">
+                <i class="bi bi-box-arrow-right"></i>
+            </a>
+        </div>
+    </div>
+
+</div>
+
+<script>
+function applyTheme(theme) {
+    document.documentElement.setAttribute('data-theme', theme);
+    const icon = document.getElementById('themeIcon');
+    if (icon) {
+        icon.className = theme === 'dark' ? 'bi bi-sun' : 'bi bi-moon';
+    }
+}
+
+function toggleTheme() {
+    const current = document.documentElement.getAttribute('data-theme') || 'light';
+    const next = current === 'dark' ? 'light' : 'dark';
+    localStorage.setItem('theme', next);
+    applyTheme(next);
+}
+
+// Terapkan tema saat halaman dimuat — sebelum render untuk hindari flicker
+(function() {
+    const saved = localStorage.getItem('theme') || 'light';
+    applyTheme(saved);
+})();
+</script>

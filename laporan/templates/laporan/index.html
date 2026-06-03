@@ -1,0 +1,180 @@
+{% extends 'base.html' %}
+{% load humanize %}
+
+{% block title %}Laporan{% endblock %}
+{% block page_title %}Laporan{% endblock %}
+{% block page_desc %}Analisis dan laporan inventory{% endblock %}
+
+{% block content %}
+
+<!-- TOOLBAR -->
+<div class="dashboard-toolbar">
+    <a href="#" class="btn-primary-custom">
+        <i class="bi bi-download"></i> Export PDF
+    </a>
+</div>
+
+<!-- A. KPI SUMMARY -->
+<div class="grid-3 mb-4">
+
+    <div class="kpi-card">
+        <div class="kpi-content">
+            <p class="kpi-label">Total Nilai Inventory</p>
+            <h3 class="kpi-value">Rp {{ total_nilai_inventory|intcomma }}</h3>
+        </div>
+        <div class="kpi-icon primary">
+            <i class="bi bi-bar-chart"></i>
+        </div>
+    </div>
+
+    <div class="kpi-card">
+        <div class="kpi-content">
+            <p class="kpi-label">Total Item</p>
+            <h3 class="kpi-value">{{ total_item }}</h3>
+        </div>
+        <div class="kpi-icon success">
+            <i class="bi bi-box-seam"></i>
+        </div>
+    </div>
+
+    <div class="kpi-card">
+        <div class="kpi-content">
+            <p class="kpi-label">Total Transaksi</p>
+            <h3 class="kpi-value">{{ total_transaksi_masuk|add:total_transaksi_keluar }}</h3>
+        </div>
+        <div class="kpi-icon purple">
+            <i class="bi bi-arrow-left-right"></i>
+        </div>
+    </div>
+
+</div>
+
+<!-- B. BARANG MASUK & KELUAR -->
+<div class="grid-2 mb-4">
+
+    <div class="dashboard-card">
+        <div class="activity-left mb-10">
+            <div class="activity-icon bg-soft-success">
+                <i class="bi bi-arrow-down"></i>
+            </div>
+            <div>
+                <strong>Barang Masuk</strong><br>
+                <small class="text-muted">Total transaksi: {{ total_transaksi_masuk }}</small>
+            </div>
+        </div>
+        <div class="divider"></div>
+        <div class="mt-10">
+            <p class="mb-1">Total Unit: <strong>{{ total_unit_masuk }}</strong></p>
+            <p class="mb-0">Total Nilai:
+                <strong class="text-success">Rp {{ total_nilai_masuk|intcomma }}</strong>
+            </p>
+        </div>
+    </div>
+
+    <div class="dashboard-card">
+        <div class="activity-left mb-10">
+            <div class="activity-icon bg-soft-danger">
+                <i class="bi bi-arrow-up"></i>
+            </div>
+            <div>
+                <strong>Barang Keluar</strong><br>
+                <small class="text-muted">Total transaksi: {{ total_transaksi_keluar }}</small>
+            </div>
+        </div>
+        <div class="divider"></div>
+        <div class="mt-10">
+            <p class="mb-1">Total Unit: <strong>{{ total_unit_keluar }}</strong></p>
+            <p class="mb-0">Total Nilai:
+                <strong class="text-danger">Rp {{ total_nilai_keluar|intcomma }}</strong>
+            </p>
+        </div>
+    </div>
+
+</div>
+
+<!-- C. NILAI PER KATEGORI -->
+<div class="enterprise-card mb-4">
+    <div class="card-header">Nilai Inventory per Kategori</div>
+    <div class="table-responsive">
+        <table class="enterprise-table">
+            <thead>
+                <tr>
+                    <th>Kategori</th>
+                    <th class="text-center">Total Unit</th>
+                    <th class="text-end">Total Nilai</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for k in nilai_per_kategori %}
+                <tr>
+                    <td>{{ k.kategori__nama_kategori }}</td>
+                    <td class="text-center">{{ k.total_unit }}</td>
+                    <td class="text-end">Rp {{ k.total_nilai|intcomma }}</td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="3" class="text-center py-4 text-muted">Belum ada data</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- D. RINGKASAN PRODUK -->
+<div class="enterprise-card mb-4">
+    <div class="card-header">Ringkasan Produk</div>
+    <div class="table-responsive">
+        <table class="enterprise-table">
+            <thead>
+                <tr>
+                    <th>Nama Produk</th>
+                    <th class="text-center">Jumlah Transaksi</th>
+                    <th class="text-center">Total Unit</th>
+                    <th class="text-end">Total Nilai</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for p in ringkasan_produk %}
+                <tr>
+                    <td>{{ p.produk__nama_produk }}</td>
+                    <td class="text-center">{{ p.jumlah_transaksi }}</td>
+                    <td class="text-center">{{ p.total_unit }}</td>
+                    <td class="text-end">Rp {{ p.total_nilai|intcomma }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- E. PRODUK NILAI TERTINGGI -->
+<div class="enterprise-card">
+    <div class="card-header">Produk dengan Nilai Tertinggi</div>
+    <div class="table-responsive">
+        <table class="enterprise-table">
+            <thead>
+                <tr>
+                    <th>Nama Produk</th>
+                    <th>Kategori</th>
+                    <th class="text-center">Stok</th>
+                    <th class="text-end">Total Nilai</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for p in produk_tertinggi %}
+                <tr>
+                    <td class="fw-semibold">{{ p.nama_produk }}</td>
+                    <td>
+                        <span class="badge-soft primary">{{ p.kategori.nama_kategori }}</span>
+                    </td>
+                    <td class="text-center">{{ p.stok }}</td>
+                    <td class="text-end">Rp {{ p.total_nilai|intcomma }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+{% endblock %}

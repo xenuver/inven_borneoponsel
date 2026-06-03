@@ -1,0 +1,73 @@
+{% extends 'base.html' %}
+{% block title %}Info Toko{% endblock %}
+{% block page_title %}Info Toko{% endblock %}
+{% block page_desc %}Konfigurasi informasi bisnis dan pengaturan default{% endblock %}
+
+{% block content %}
+
+{% if messages %}
+{% for message in messages %}
+<div class="alert alert-{% if message.tags == 'error' %}danger{% else %}success{% endif %} mb-3">
+    {{ message }}
+</div>
+{% endfor %}
+{% endif %}
+
+<div class="row justify-content-center">
+    <div class="col-lg-7 col-md-9">
+        <div class="form-card">
+            <form method="post">
+                {% csrf_token %}
+                <div class="row g-3">
+
+                    <div class="col-12">
+                        <label class="form-label">Nama Toko</label>
+                        <input type="text" name="nama_toko" class="form-control"
+                               value="{{ toko.nama_toko }}" placeholder="Nama toko" required>
+                    </div>
+
+                    <div class="col-12">
+                        <label class="form-label">Alamat</label>
+                        <textarea name="alamat" class="form-control" rows="3"
+                                  placeholder="Alamat lengkap toko">{{ toko.alamat }}</textarea>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="form-label">Nomor Telepon</label>
+                        <input type="text" name="telepon" class="form-control"
+                               value="{{ toko.telepon }}" placeholder="08xx-xxxx-xxxx">
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="form-label">Email Toko</label>
+                        <input type="email" name="email" class="form-control"
+                               value="{{ toko.email }}" placeholder="toko@email.com">
+                    </div>
+
+                    <div class="col-12">
+                        <div style="height:1px; background:var(--gray-200); margin:4px 0;"></div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="form-label">Stok Minimum Default</label>
+                        <input type="number" name="stok_minimum_default" class="form-control"
+                               value="{{ toko.stok_minimum_default }}" min="0">
+                        <div style="font-size:12px; color:var(--text-muted); margin-top:4px;">
+                            Nilai default saat tambah produk baru
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="d-flex justify-content-end gap-2 mt-4">
+                    <a href="{% url 'pengaturan:index' %}" class="btn btn-outline-secondary">Batal</a>
+                    <button type="submit" class="btn-primary-custom">
+                        <i class="bi bi-check-lg"></i> Simpan
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

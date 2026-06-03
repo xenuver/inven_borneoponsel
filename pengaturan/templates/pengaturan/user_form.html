@@ -1,0 +1,86 @@
+{% extends 'base.html' %}
+{% block title %}{{ title }}{% endblock %}
+{% block page_title %}{{ title }}{% endblock %}
+{% block page_desc %}{% if obj %}Edit data user{% else %}Tambah user baru ke sistem{% endif %}{% endblock %}
+
+{% block content %}
+
+{% if messages %}
+{% for message in messages %}
+<div class="alert alert-{% if message.tags == 'error' %}danger{% else %}success{% endif %} mb-3">
+    {{ message }}
+</div>
+{% endfor %}
+{% endif %}
+
+<div class="row justify-content-center">
+    <div class="col-lg-6 col-md-8">
+        <div class="form-card">
+            <form method="post">
+                {% csrf_token %}
+                <div class="row g-3">
+
+                    {% if not obj %}
+                    <div class="col-12">
+                        <label class="form-label">Username</label>
+                        <input type="text" name="username" class="form-control"
+                               placeholder="Masukkan username" required>
+                    </div>
+                    {% endif %}
+
+                    <div class="col-md-6">
+                        <label class="form-label">Nama Depan</label>
+                        <input type="text" name="first_name" class="form-control"
+                               value="{{ obj.first_name|default:'' }}" placeholder="Nama depan">
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="form-label">Nama Belakang</label>
+                        <input type="text" name="last_name" class="form-control"
+                               value="{{ obj.last_name|default:'' }}" placeholder="Nama belakang">
+                    </div>
+
+                    <div class="col-12">
+                        <label class="form-label">Email</label>
+                        <input type="email" name="email" class="form-control"
+                               value="{{ obj.email|default:'' }}" placeholder="email@contoh.com">
+                    </div>
+
+                    <div class="col-12">
+                        <label class="form-label">Role</label>
+                        <select name="role" class="form-select">
+                            <option value="petugas" {% if obj.role == 'petugas' %}selected{% endif %}>Petugas Gudang</option>
+                            <option value="admin"   {% if obj.role == 'admin'   %}selected{% endif %}>Admin</option>
+                        </select>
+                    </div>
+
+                    {% if not obj %}
+                    <div class="col-12">
+                        <div style="height:1px; background:var(--gray-200); margin:4px 0;"></div>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Password</label>
+                        <input type="password" name="password" class="form-control"
+                               placeholder="Min. 8 karakter" required>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Konfirmasi Password</label>
+                        <input type="password" name="password2" class="form-control"
+                               placeholder="Ulangi password" required>
+                    </div>
+                    {% endif %}
+
+                </div>
+
+                <div class="d-flex justify-content-end gap-2 mt-4">
+                    <a href="{% url 'pengaturan:user_list' %}" class="btn btn-outline-secondary">Batal</a>
+                    <button type="submit" class="btn-primary-custom">
+                        <i class="bi bi-check-lg"></i> Simpan
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

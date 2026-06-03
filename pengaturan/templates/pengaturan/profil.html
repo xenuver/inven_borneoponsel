@@ -1,0 +1,82 @@
+{% extends 'base.html' %}
+{% block title %}Profil Saya{% endblock %}
+{% block page_title %}Profil Saya{% endblock %}
+{% block page_desc %}Perbarui informasi akun kamu{% endblock %}
+
+{% block content %}
+
+{% if messages %}
+{% for message in messages %}
+<div class="alert alert-{% if message.tags == 'error' %}danger{% else %}success{% endif %} mb-3">
+    {{ message }}
+</div>
+{% endfor %}
+{% endif %}
+
+<div class="row g-3 justify-content-center">
+    <div class="col-lg-6 col-md-8">
+
+        <!-- Avatar & info singkat -->
+        <div class="enterprise-card mb-3">
+            <div class="card-body p-4">
+                <div class="d-flex align-items-center gap-3">
+                    <div style="width:56px; height:56px; border-radius:50%; background:var(--primary); display:flex; align-items:center; justify-content:center; color:white; font-size:22px; font-weight:600; flex-shrink:0;">
+                        {{ request.user.username|first|upper }}
+                    </div>
+                    <div>
+                        <div class="fw-semibold" style="font-size:16px;">
+                            {{ request.user.get_full_name|default:request.user.username }}
+                        </div>
+                        <div style="font-size:13px; color:var(--text-muted);">
+                            {{ request.user.get_role_display }}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Form edit profil -->
+        <div class="form-card">
+            <form method="post">
+                {% csrf_token %}
+                <div class="row g-3">
+                    <div class="col-12">
+                        <label class="form-label">Username</label>
+                        <input type="text" class="form-control"
+                               value="{{ request.user.username }}" disabled>
+                        <div style="font-size:12px; color:var(--text-muted); margin-top:4px;">
+                            Username tidak dapat diubah
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Nama Depan</label>
+                        <input type="text" name="first_name" class="form-control"
+                               value="{{ request.user.first_name }}" placeholder="Nama depan">
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Nama Belakang</label>
+                        <input type="text" name="last_name" class="form-control"
+                               value="{{ request.user.last_name }}" placeholder="Nama belakang">
+                    </div>
+                    <div class="col-12">
+                        <label class="form-label">Email</label>
+                        <input type="email" name="email" class="form-control"
+                               value="{{ request.user.email }}" placeholder="email@contoh.com">
+                    </div>
+                </div>
+                <div class="d-flex justify-content-between align-items-center mt-4">
+                    <a href="{% url 'pengaturan:ganti_password' %}"
+                       style="font-size:13px; color:var(--primary);">
+                        <i class="bi bi-key me-1"></i>Ganti Password
+                    </a>
+                    <button type="submit" class="btn-primary-custom">
+                        <i class="bi bi-check-lg"></i> Simpan
+                    </button>
+                </div>
+            </form>
+        </div>
+
+    </div>
+</div>
+
+{% endblock %}
