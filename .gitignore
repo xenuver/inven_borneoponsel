@@ -7,3 +7,6 @@ media/
 staticfiles/
 .vscode/
 .idea/
+
+# Docker
+*.log

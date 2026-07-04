@@ -6,10 +6,13 @@
 {% block content %}
 
 <!-- TOOLBAR -->
-<div class="dashboard-toolbar">
+<div class="dashboard-toolbar d-flex justify-content-between align-items-center flex-wrap gap-2">
     <button class="btn-primary-custom" id="openChoice">
         <i class="bi bi-plus-lg"></i> Tambah Transaksi
     </button>
+    <a href="{% url 'stok_opname_list' %}" class="btn btn-outline-secondary">
+        <i class="bi bi-clipboard-check"></i> Stok Opname
+    </a>
 </div>
 
 <!-- KPI CARDS -->
@@ -48,10 +51,25 @@
 </div>
 
 <!-- FILTER PILLS -->
-<div class="d-flex gap-2 mb-3">
-    <a href="?filter=semua"  class="filter-pill {% if filter_tab == 'semua' %}active{% endif %}">Semua</a>
-    <a href="?filter=masuk"  class="filter-pill {% if filter_tab == 'masuk' %}active{% endif %}">Barang Masuk</a>
-    <a href="?filter=keluar" class="filter-pill {% if filter_tab == 'keluar' %}active{% endif %}">Barang Keluar</a>
+<div class="d-flex gap-2 mb-3 flex-wrap align-items-center justify-content-between">
+    <div class="d-flex gap-2">
+        <a href="?filter=semua"  class="filter-pill {% if filter_tab == 'semua' %}active{% endif %}">Semua</a>
+        <a href="?filter=masuk"  class="filter-pill {% if filter_tab == 'masuk' %}active{% endif %}">Barang Masuk</a>
+        <a href="?filter=keluar" class="filter-pill {% if filter_tab == 'keluar' %}active{% endif %}">Barang Keluar</a>
+    </div>
+
+    <form method="get" class="d-flex gap-2 flex-wrap">
+        <input type="hidden" name="filter" value="{{ filter_tab }}">
+        <input type="text" name="q" placeholder="Cari nama/kode barang..."
+               class="form-control form-control-sm" style="width:200px;" value="{{ q }}">
+        <input type="date" name="tanggal_awal" class="form-control form-control-sm"
+               style="width:150px;" value="{{ tanggal_awal }}" title="Dari tanggal">
+        <input type="date" name="tanggal_akhir" class="form-control form-control-sm"
+               style="width:150px;" value="{{ tanggal_akhir }}" title="Sampai tanggal">
+        <button type="submit" class="btn btn-outline-secondary btn-sm">
+            <i class="bi bi-search"></i> Filter
+        </button>
+    </form>
 </div>
 
 <!-- TABLE -->
@@ -64,6 +82,7 @@
                     <th>Nama Barang</th>
                     <th>Jenis</th>
                     <th>Jumlah</th>
+                    <th>Supplier</th>
                     <th>Keterangan</th>
                     <th>User</th>
                 </tr>
@@ -90,13 +109,16 @@
                         {% endif %}
                     </td>
                     <td style="font-size:13px; color:var(--text-muted);">
+                        {{ item.transaksi.supplier.nama_supplier|default:"-" }}
+                    </td>
+                    <td style="font-size:13px; color:var(--text-muted);">
                         {{ item.transaksi.keterangan|default:"-" }}
                     </td>
                     <td style="font-size:13px;">{{ item.transaksi.user }}</td>
                 </tr>
                 {% empty %}
                 <tr>
-                    <td colspan="6" class="text-center py-4 text-muted">
+                    <td colspan="7" class="text-center py-4 text-muted">
                         Tidak ada data transaksi
                     </td>
                 </tr>
@@ -112,12 +134,12 @@
         </small>
         <div class="d-flex gap-2">
             {% if transaksi_list.has_previous %}
-            <a class="pagination-btn" href="?page={{ transaksi_list.previous_page_number }}&filter={{ filter_tab }}">
+            <a class="pagination-btn" href="?page={{ transaksi_list.previous_page_number }}&filter={{ filter_tab }}&q={{ q }}&tanggal_awal={{ tanggal_awal }}&tanggal_akhir={{ tanggal_akhir }}">
                 <i class="bi bi-chevron-left"></i> Sebelumnya
             </a>
             {% endif %}
             {% if transaksi_list.has_next %}
-            <a class="pagination-btn" href="?page={{ transaksi_list.next_page_number }}&filter={{ filter_tab }}">
+            <a class="pagination-btn" href="?page={{ transaksi_list.next_page_number }}&filter={{ filter_tab }}&q={{ q }}&tanggal_awal={{ tanggal_awal }}&tanggal_akhir={{ tanggal_akhir }}">
                 Berikutnya <i class="bi bi-chevron-right"></i>
             </a>
             {% endif %}

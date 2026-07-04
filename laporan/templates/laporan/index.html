@@ -8,11 +8,35 @@
 {% block content %}
 
 <!-- TOOLBAR -->
-<div class="dashboard-toolbar">
-    <a href="#" class="btn-primary-custom">
-        <i class="bi bi-download"></i> Export PDF
+<div class="dashboard-toolbar d-flex justify-content-between align-items-center flex-wrap gap-2">
+    <form method="get" class="d-flex gap-2 flex-wrap align-items-center">
+        <input type="date" name="tanggal_awal" class="form-control form-control-sm"
+               style="width:150px;" value="{{ tanggal_awal }}" title="Dari tanggal">
+        <span style="color: var(--text-muted); font-size: 13px;">s/d</span>
+        <input type="date" name="tanggal_akhir" class="form-control form-control-sm"
+               style="width:150px;" value="{{ tanggal_akhir }}" title="Sampai tanggal">
+        <button type="submit" class="btn btn-outline-secondary btn-sm">
+            <i class="bi bi-funnel"></i> Terapkan
+        </button>
+        {% if tanggal_awal or tanggal_akhir %}
+        <a href="{% url 'laporan:index' %}" class="btn btn-link btn-sm text-muted">Reset</a>
+        {% endif %}
+    </form>
+
+    <a href="{% url 'laporan:export_excel' %}?tanggal_awal={{ tanggal_awal }}&tanggal_akhir={{ tanggal_akhir }}"
+       class="btn-primary-custom">
+        <i class="bi bi-file-earmark-excel"></i> Export Excel
     </a>
 </div>
+
+{% if tanggal_awal or tanggal_akhir %}
+<div style="font-size: 13px; color: var(--text-muted); margin-top: -12px; margin-bottom: 16px;">
+    <i class="bi bi-info-circle"></i>
+    Data transaksi (Barang Masuk/Keluar) ditampilkan untuk periode
+    <strong>{{ tanggal_awal|default:"awal" }}</strong> s/d <strong>{{ tanggal_akhir|default:"sekarang" }}</strong>.
+    Ringkasan stok saat ini tidak terpengaruh filter periode.
+</div>
+{% endif %}
 
 <!-- A. KPI SUMMARY -->
 <div class="grid-3 mb-4">
@@ -123,7 +147,10 @@
 
 <!-- D. RINGKASAN PRODUK -->
 <div class="enterprise-card mb-4">
-    <div class="card-header">Ringkasan Produk</div>
+    <div class="card-header">
+        <span>Ringkasan Produk</span>
+        <span class="badge-soft primary" style="font-size: 11px;">Top 20 berdasarkan nilai</span>
+    </div>
     <div class="table-responsive">
         <table class="enterprise-table">
             <thead>
@@ -150,7 +177,10 @@
 
 <!-- E. PRODUK NILAI TERTINGGI -->
 <div class="enterprise-card">
-    <div class="card-header">Produk dengan Nilai Tertinggi</div>
+    <div class="card-header">
+        <span>Produk dengan Nilai Tertinggi</span>
+        <span class="badge-soft primary" style="font-size: 11px;">Top 10</span>
+    </div>
     <div class="table-responsive">
         <table class="enterprise-table">
             <thead>

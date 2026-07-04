@@ -1,0 +1,71 @@
+{% extends 'base.html' %}
+{% block title %}Data Supplier{% endblock %}
+{% block page_title %}Data Supplier{% endblock %}
+{% block page_desc %}Kelola daftar pemasok barang{% endblock %}
+
+{% block content %}
+
+<div class="enterprise-card">
+
+    <div class="card-header">
+        <span>Daftar Supplier</span>
+        <div class="d-flex gap-2 align-items-center">
+            <form method="get" class="d-flex gap-2">
+                <input type="text" name="q" placeholder="Cari supplier..."
+                       class="form-control form-control-sm" style="width:200px;"
+                       value="{{ q }}">
+                <button type="submit" class="btn btn-outline-secondary btn-sm">
+                    <i class="bi bi-search"></i>
+                </button>
+            </form>
+            <a href="{% url 'supplier:tambah' %}" class="btn-primary-custom">
+                <i class="bi bi-plus-lg"></i> Tambah Supplier
+            </a>
+        </div>
+    </div>
+
+    <table class="enterprise-table">
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>Nama Supplier</th>
+                <th>Kontak</th>
+                <th>Telepon</th>
+                <th class="text-end">Aksi</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for s in supplier %}
+            <tr>
+                <td style="color: var(--text-muted); font-size: 13px;">{{ forloop.counter }}</td>
+                <td class="fw-semibold">{{ s.nama_supplier }}</td>
+                <td style="color: var(--text-muted); font-size: 13px;">{{ s.kontak_person|default:"-" }}</td>
+                <td style="color: var(--text-muted); font-size: 13px;">{{ s.telepon|default:"-" }}</td>
+                <td class="text-end">
+                    <a href="{% url 'supplier:edit' s.id %}"
+                       style="color: var(--primary); margin-right: 12px; font-size: 13px; text-decoration: none;">
+                        <i class="bi bi-pencil"></i> Edit
+                    </a>
+                    <form method="post" action="{% url 'supplier:hapus' s.id %}" class="d-inline"
+                          onsubmit="return confirm('Nonaktifkan supplier ini?')">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-link p-0"
+                                style="color: var(--danger); font-size: 13px; text-decoration: none;">
+                            <i class="bi bi-trash"></i> Hapus
+                        </button>
+                    </form>
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="5" class="text-center py-4 text-muted">
+                    Belum ada supplier. <a href="{% url 'supplier:tambah' %}">Tambah sekarang</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+</div>
+
+{% endblock %}

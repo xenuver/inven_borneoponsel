@@ -1,0 +1,61 @@
+{% extends 'base.html' %}
+{% block title %}Riwayat Harga{% endblock %}
+{% block page_title %}Riwayat Harga{% endblock %}
+{% block page_desc %}Histori perubahan harga beli & jual produk{% endblock %}
+
+{% block content %}
+
+<div class="enterprise-card">
+
+    <div class="card-header">
+        <div>
+            <span class="fw-semibold">{{ produk.nama_produk }}</span>
+            <div style="font-size:13px; color:var(--text-muted); font-weight:400;">
+                Kode: {{ produk.kode_produk }} — Harga sekarang: Rp {{ produk.harga_beli|floatformat:0 }} / Rp {{ produk.harga_jual|floatformat:0 }}
+            </div>
+        </div>
+        <a href="{% url 'produk:edit' produk.id %}" class="btn btn-outline-secondary btn-sm">
+            <i class="bi bi-arrow-left"></i> Kembali ke Edit Produk
+        </a>
+    </div>
+
+    <div class="table-responsive">
+        <table class="enterprise-table">
+            <thead>
+                <tr>
+                    <th>Tanggal</th>
+                    <th>Harga Beli</th>
+                    <th>Harga Jual</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for r in riwayat %}
+                <tr>
+                    <td style="font-size:13px; color:var(--text-muted);">
+                        {{ r.diubah_pada|date:"d M Y, H:i" }}
+                    </td>
+                    <td>
+                        Rp {{ r.harga_beli_lama|floatformat:0 }}
+                        <i class="bi bi-arrow-right mx-1"></i>
+                        Rp {{ r.harga_beli_baru|floatformat:0 }}
+                    </td>
+                    <td>
+                        Rp {{ r.harga_jual_lama|floatformat:0 }}
+                        <i class="bi bi-arrow-right mx-1"></i>
+                        Rp {{ r.harga_jual_baru|floatformat:0 }}
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="3" class="text-center py-4 text-muted">
+                        Belum ada perubahan harga untuk produk ini
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+</div>
+
+{% endblock %}

@@ -17,48 +17,57 @@
 
                     <div class="col-12">
                         <label class="form-label">Nama Produk</label>
-                        <input type="text" name="nama_produk" class="form-control"
-                               placeholder="Masukkan nama produk"
-                               value="{{ produk.nama_produk|default:'' }}" required>
+                        {{ form.nama_produk }}
+                        {% for error in form.nama_produk.errors %}
+                        <div class="text-danger" style="font-size:12px;">{{ error }}</div>
+                        {% endfor %}
                     </div>
 
                     <div class="col-12">
                         <label class="form-label">Kategori</label>
-                        <select name="kategori" class="form-select" required>
-                            <option value="">-- Pilih Kategori --</option>
-                            {% for k in kategori %}
-                            <option value="{{ k.id }}" {% if produk.kategori.id == k.id %}selected{% endif %}>
-                                {{ k.nama_kategori }}
-                            </option>
-                            {% endfor %}
-                        </select>
+                        {{ form.kategori }}
+                        {% for error in form.kategori.errors %}
+                        <div class="text-danger" style="font-size:12px;">{{ error }}</div>
+                        {% endfor %}
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="form-label">Kondisi</label>
+                        {{ form.kondisi }}
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="form-label">Garansi Toko (hari)</label>
+                        {{ form.garansi_hari }}
+                        <div style="font-size: 12px; color: var(--text-muted); margin-top: 4px;">
+                            Isi 0 kalau produk ini tidak ada garansi
+                        </div>
                     </div>
 
                     <div class="col-md-6">
                         <label class="form-label">Harga Beli (Rp)</label>
-                        <input type="number" name="harga_beli" class="form-control"
-                               placeholder="0" value="{{ produk.harga_beli|default:'' }}"
-                               min="0" required>
+                        {{ form.harga_beli }}
+                        {% for error in form.harga_beli.errors %}
+                        <div class="text-danger" style="font-size:12px;">{{ error }}</div>
+                        {% endfor %}
                     </div>
 
                     <div class="col-md-6">
                         <label class="form-label">Harga Jual (Rp)</label>
-                        <input type="number" name="harga_jual" class="form-control"
-                               placeholder="0" value="{{ produk.harga_jual|default:'' }}"
-                               min="0" required>
+                        {{ form.harga_jual }}
+                        {% for error in form.harga_jual.errors %}
+                        <div class="text-danger" style="font-size:12px;">{{ error }}</div>
+                        {% endfor %}
                     </div>
 
                     <div class="col-md-6">
                         <label class="form-label">Satuan</label>
-                        <input type="text" name="satuan" class="form-control"
-                               placeholder="pcs, kg, liter, dll"
-                               value="{{ produk.satuan|default:'pcs' }}">
+                        {{ form.satuan }}
                     </div>
 
                     <div class="col-md-6">
                         <label class="form-label">Stok Minimum</label>
-                        <input type="number" name="stok_minimum" class="form-control"
-                               value="{{ produk.stok_minimum|default:5 }}" min="0">
+                        {{ form.stok_minimum }}
                         <div style="font-size: 12px; color: var(--text-muted); margin-top: 4px;">
                             Peringatan muncul jika stok di bawah nilai ini
                         </div>
@@ -70,6 +79,10 @@
                             <i class="bi bi-info-circle me-1"></i>
                             Stok saat ini: <strong>{{ produk.stok }} {{ produk.satuan }}</strong> —
                             ubah stok lewat menu <a href="/transaksi/" style="color: var(--primary);">Transaksi</a>.
+                            &nbsp;|&nbsp;
+                            <a href="{% url 'produk:riwayat_harga' produk.id %}" style="color: var(--primary);">
+                                Lihat riwayat harga
+                            </a>
                         </div>
                     </div>
                     {% endif %}

@@ -1,8 +1,12 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
+from django.views.decorators.http import require_POST
+from accounts.decorators import admin_required, petugas_required
+from pengaturan.utils import catat_aktivitas
 from .models import Kategori
 
 
+@petugas_required
 def kategori_list(request):
     kategori = Kategori.objects.filter(is_active=True)
     return render(request, 'kategori/list.html', {
@@ -10,6 +14,7 @@ def kategori_list(request):
     })
 
 
+@admin_required
 def kategori_tambah(request):
     if request.method == 'POST':
         nama = request.POST.get('nama_kategori', '').strip()
@@ -23,12 +28,14 @@ def kategori_tambah(request):
             nama_kategori=nama,
             deskripsi=deskripsi
         )
+        catat_aktivitas(request, 'tambah', f'Tambah kategori: {nama}')
         messages.success(request, f'Kategori "{nama}" berhasil ditambahkan.')
         return redirect('kategori:list')
 
     return render(request, 'kategori/form.html', {'title': 'Tambah Kategori'})
 
 
+@admin_required
 def kategori_edit(request, id):
     kategori = get_object_or_404(Kategori, id=id)
 
@@ -47,6 +54,7 @@ def kategori_edit(request, id):
         kategori.deskripsi = deskripsi
         kategori.save()
 
+        catat_aktivitas(request, 'ubah', f'Edit kategori: {nama}')
         messages.success(request, f'Kategori "{nama}" berhasil diperbarui.')
         return redirect('kategori:list')
 
@@ -56,6 +64,8 @@ def kategori_edit(request, id):
     })
 
 
+@admin_required
+@require_POST
 def kategori_hapus(request, id):
     kategori = get_object_or_404(Kategori, id=id)
 
@@ -71,5 +81,6 @@ def kategori_hapus(request, id):
     kategori.is_active = False
     kategori.save()
 
+    catat_aktivitas(request, 'hapus', f'Hapus kategori: {nama}')
     messages.success(request, f'Kategori "{nama}" berhasil dihapus.')
     return redirect('kategori:list')

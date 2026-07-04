@@ -36,11 +36,14 @@
                        style="color: var(--primary); margin-right: 12px; font-size: 13px; text-decoration: none;">
                         <i class="bi bi-pencil"></i> Edit
                     </a>
-                    <a href="{% url 'kategori:hapus' k.id %}"
-                       onclick="return confirm('Hapus kategori ini?')"
-                       style="color: var(--danger); font-size: 13px; text-decoration: none;">
-                        <i class="bi bi-trash"></i> Hapus
-                    </a>
+                    <form method="post" action="{% url 'kategori:hapus' k.id %}" class="d-inline"
+                          onsubmit="return confirm('Hapus kategori ini?')">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-link p-0"
+                                style="color: var(--danger); font-size: 13px; text-decoration: none;">
+                            <i class="bi bi-trash"></i> Hapus
+                        </button>
+                    </form>
                 </td>
             </tr>
             {% empty %}

@@ -1,0 +1,58 @@
+{% extends 'base.html' %}
+{% block title %}{{ title }}{% endblock %}
+{% block page_title %}{{ title }}{% endblock %}
+{% block page_desc %}Data pemasok barang{% endblock %}
+
+{% block content %}
+
+<div class="row justify-content-center">
+    <div class="col-lg-7 col-md-10">
+        <div class="form-card">
+            <form method="post">
+                {% csrf_token %}
+                <div class="row g-3">
+
+                    <div class="col-12">
+                        <label class="form-label">Nama Supplier</label>
+                        <input type="text" name="nama_supplier" class="form-control"
+                               placeholder="Masukkan nama supplier"
+                               value="{{ supplier.nama_supplier|default:'' }}" required>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="form-label">Kontak Person</label>
+                        <input type="text" name="kontak_person" class="form-control"
+                               value="{{ supplier.kontak_person|default:'' }}">
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="form-label">Telepon</label>
+                        <input type="text" name="telepon" class="form-control"
+                               value="{{ supplier.telepon|default:'' }}">
+                    </div>
+
+                    <div class="col-12">
+                        <label class="form-label">Email</label>
+                        <input type="email" name="email" class="form-control"
+                               value="{{ supplier.email|default:'' }}">
+                    </div>
+
+                    <div class="col-12">
+                        <label class="form-label">Alamat</label>
+                        <textarea name="alamat" class="form-control" rows="3">{{ supplier.alamat|default:'' }}</textarea>
+                    </div>
+
+                </div>
+
+                <div class="d-flex justify-content-end gap-2 mt-4">
+                    <a href="{% url 'supplier:list' %}" class="btn btn-outline-secondary">Batal</a>
+                    <button type="submit" class="btn-primary-custom">
+                        <i class="bi bi-check-lg"></i> Simpan
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

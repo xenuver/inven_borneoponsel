@@ -1,0 +1,75 @@
+{% extends 'base.html' %}
+{% block title %}Stok Opname{% endblock %}
+{% block page_title %}Stok Opname{% endblock %}
+{% block page_desc %}Cocokkan stok sistem dengan stok fisik di gudang{% endblock %}
+
+{% block content %}
+
+<div class="row g-4">
+
+    <div class="col-lg-4">
+        <div class="form-card">
+            <h6 class="fw-semibold mb-3">Catat Hasil Hitung Fisik</h6>
+            <form method="post" action="{% url 'stok_opname_simpan' %}">
+                {% csrf_token %}
+                {{ form.as_p }}
+                <button type="submit" class="btn-primary-custom w-100 mt-2">
+                    <i class="bi bi-check-lg"></i> Simpan
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <div class="col-lg-8">
+        <div class="enterprise-card">
+            <div class="card-header">
+                <span class="fw-semibold">Riwayat Stok Opname</span>
+            </div>
+            <div class="table-responsive">
+                <table class="enterprise-table">
+                    <thead>
+                        <tr>
+                            <th>Tanggal</th>
+                            <th>Produk</th>
+                            <th>Stok Sistem</th>
+                            <th>Stok Fisik</th>
+                            <th>Selisih</th>
+                            <th>User</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for r in riwayat %}
+                        <tr>
+                            <td style="font-size:13px; color:var(--text-muted); white-space:nowrap;">
+                                {{ r.tanggal|date:"d M Y, H:i" }}
+                            </td>
+                            <td class="fw-semibold">{{ r.produk.nama_produk }}</td>
+                            <td>{{ r.stok_sistem }}</td>
+                            <td>{{ r.stok_fisik }}</td>
+                            <td>
+                                {% if r.selisih > 0 %}
+                                    <span class="text-success fw-semibold">+{{ r.selisih }}</span>
+                                {% elif r.selisih < 0 %}
+                                    <span class="text-danger fw-semibold">{{ r.selisih }}</span>
+                                {% else %}
+                                    <span class="text-muted">0</span>
+                                {% endif %}
+                            </td>
+                            <td style="font-size:13px;">{{ r.user }}</td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="6" class="text-center py-4 text-muted">
+                                Belum ada catatan stok opname
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+{% endblock %}

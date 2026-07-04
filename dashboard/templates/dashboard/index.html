@@ -107,7 +107,12 @@
     <div class="col-xl-4 col-md-12">
         <div class="kpi-card">
             <div class="kpi-content">
-                <p class="kpi-label">Transaksi Hari Ini</p>
+                <p class="kpi-label">
+                    {% if filter_waktu == 'hari' %}Transaksi Hari Ini
+                    {% elif filter_waktu == 'bulan' %}Transaksi Bulan Ini
+                    {% elif filter_waktu == 'tahun' %}Transaksi Tahun Ini
+                    {% else %}Total Transaksi{% endif %}
+                </p>
                 <h3 class="kpi-value">{{ transaksi_hari_ini }}</h3>
             </div>
             <div class="kpi-icon primary">
@@ -182,7 +187,7 @@
             </div>
             <div class="p-3">
                 {% for produk in peringatan_stok %}
-                <div class="stock-item">
+                <a href="{% url 'produk:edit' produk.id %}" class="stock-item text-decoration-none" style="display:flex; color:inherit;">
                     <div>
                         <p class="mb-0 fw-semibold" style="font-size: 14px;">
                             {{ produk.nama_produk }}
@@ -190,13 +195,32 @@
                         <small class="text-muted">{{ produk.kategori.nama_kategori }}</small>
                     </div>
                     <span class="stock-badge">{{ produk.stok }}</span>
-                </div>
+                </a>
                 {% empty %}
                 <div class="text-center py-4">
                     <i class="bi bi-check-circle text-success" style="font-size: 24px;"></i>
                     <p class="text-muted mt-2 mb-0" style="font-size: 13px;">Semua stok dalam kondisi baik</p>
                 </div>
                 {% endfor %}
+                {% if stok_rendah > 10 %}
+                <div class="text-center pt-2">
+                    <a href="/produk/" style="font-size: 12px; color: var(--primary);">
+                        +{{ stok_rendah|add:"-10" }} produk lainnya, lihat semua di halaman Produk
+                    </a>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <!-- TREN TRANSAKSI -->
+    <div class="col-12">
+        <div class="enterprise-card">
+            <div class="card-header">
+                <span>Tren Transaksi 14 Hari Terakhir</span>
+            </div>
+            <div class="p-3">
+                <canvas id="trenChart" height="80"></canvas>
             </div>
         </div>
     </div>
@@ -234,5 +258,52 @@
     </div>
 
 </div>
+
+{{ tren_labels|json_script:"tren-labels-data" }}
+{{ tren_masuk|json_script:"tren-masuk-data" }}
+{{ tren_keluar|json_script:"tren-keluar-data" }}
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<script>
+const trenLabels = JSON.parse(document.getElementById('tren-labels-data').textContent);
+const trenMasuk = JSON.parse(document.getElementById('tren-masuk-data').textContent);
+const trenKeluar = JSON.parse(document.getElementById('tren-keluar-data').textContent);
+
+const trenCtx = document.getElementById('trenChart');
+new Chart(trenCtx, {
+    type: 'line',
+    data: {
+        labels: trenLabels,
+        datasets: [
+            {
+                label: 'Barang Masuk',
+                data: trenMasuk,
+                borderColor: '#16a34a',
+                backgroundColor: 'rgba(22, 163, 74, 0.08)',
+                tension: 0.3,
+                fill: true,
+            },
+            {
+                label: 'Barang Keluar',
+                data: trenKeluar,
+                borderColor: '#dc2626',
+                backgroundColor: 'rgba(220, 38, 38, 0.08)',
+                tension: 0.3,
+                fill: true,
+            }
+        ]
+    },
+    options: {
+        responsive: true,
+        interaction: { mode: 'index', intersect: false },
+        plugins: {
+            legend: { position: 'top' }
+        },
+        scales: {
+            y: { beginAtZero: true, ticks: { precision: 0 } }
+        }
+    }
+});
+</script>
 
 {% endblock %}

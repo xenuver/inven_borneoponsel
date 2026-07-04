@@ -2,6 +2,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from django.contrib.auth import update_session_auth_hash
 from django.contrib.auth.hashers import check_password
+from django.core.paginator import Paginator
 
 from accounts.models import User
 from accounts.decorators import admin_required, petugas_required
@@ -189,8 +190,27 @@ def info_toko(request):
 
 @admin_required
 def log_aktivitas(request):
-    logs = LogAktivitas.objects.select_related('user').all()[:200]
-    return render(request, 'pengaturan/log_aktivitas.html', {'logs': logs})
+    aksi_filter = request.GET.get('aksi', '')
+    q = request.GET.get('q', '').strip()
+
+    logs = LogAktivitas.objects.select_related('user').all()
+
+    if aksi_filter:
+        logs = logs.filter(aksi=aksi_filter)
+
+    if q:
+        logs = logs.filter(keterangan__icontains=q)
+
+    paginator = Paginator(logs, 25)
+    page_number = request.GET.get('page')
+    logs_page = paginator.get_page(page_number)
+
+    return render(request, 'pengaturan/log_aktivitas.html', {
+        'logs': logs_page,
+        'aksi_filter': aksi_filter,
+        'q': q,
+        'aksi_choices': LogAktivitas.AKSI_CHOICES,
+    })
 
 
 # ============================================================

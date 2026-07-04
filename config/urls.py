@@ -10,6 +10,7 @@ urlpatterns = [
     path('accounts/',   include('accounts.urls')),
     path('dashboard/',  include('dashboard.urls')),
     path('produk/',     include('produk.urls')),
+    path('supplier/',   include('supplier.urls')),
     path('transaksi/',  include('transaksi.urls')),
     path('kategori/',   include('kategori.urls')),
     path('pengaturan/', include('pengaturan.urls')),
